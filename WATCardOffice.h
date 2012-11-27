@@ -9,6 +9,11 @@ class Bank;
 
 _Task WATCardOffice
 {
+    struct Args
+    {
+        unsigned int id; // ID of student for which the current Job applies
+    };
+
     struct Job
     {                // marshalled arguments and return future
         Args args;// call arguments (YOU DEFINE "Args")

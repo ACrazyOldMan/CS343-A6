@@ -1,29 +1,25 @@
 #include <uC++.h>
-#include <uFile.h>
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <cstdio>
 #include "MPRNG.h"
-#include "q1tallyVotes.h"
-#include "q1voter.h"
-#include "q1printer.h"
+#include "config.h"
+#include "Printer.h"
+#include "NameServer.h"
+#include "Bank.h"
+#include "WATCardOffice.h"
+#include "Student.h"
 
 using namespace std;
 
 MPRNG mprng; // global instance of MPRNG
 
 /**
- * @fn      Voter::main
- * @brief   Main loop of Voter
+ * @fn      Student::main
+ * @brief   Main loop of Student
  */
-void Voter::main()
+void Student::main()
 {
-    printer->print( id , Voter::Start );
-    yield( mprng( 19 ) );
-    const bool ballot = (mprng( 1 ) == 1);
-    const bool res = tallier->vote( id , ballot );
-    printer->print( id , Voter::Finished , res );
 }
 
 /**
@@ -32,15 +28,16 @@ void Voter::main()
  */
 void printUsageMsg()
 {
-    cout << "Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0 & odd, default 3)  Seed (> 0)" << endl;
+    cout << "./soda [ config-file [ random-seed ( > 0 ) ] ]" << endl;
 }
 
 void uMain::main()
 {
     const int noArgs = 1;
-    const int voterPos = 1 , groupPos = 2 , seedPos = 3;
-    const int voterMin = 1 , groupMin = 1 , seedMin = 1;
-    int voterValue = 6 , groupValue = 3 , seedValue = time( NULL );
+    const int filePos = 1 , seedPos = 2;
+    const int seedMin = 1;
+    int seedValue = time( NULL );
+    string configFile = "soda.config";
 
     switch ( argc )
     {
@@ -55,28 +52,10 @@ void uMain::main()
                 return;
             } // if
         } // case seedPos + 1
-        case groupPos + 1 :
+        case filePos + 1 :
         {
-            groupValue = atoi( argv[groupPos] );
-
-            if ( groupValue < groupMin || groupValue % 2 != 1 )
-            {
-                cout << "Invalid value [" << argv[groupPos] << "] specified for group quantity" << endl;
-                printUsageMsg();
-                return;
-            } // if
-        } // case groupPos + 1
-        case voterPos + 1 :
-        {
-            voterValue = atoi( argv[voterPos] );
-
-            if ( voterValue < voterMin || voterValue % groupValue != 0 )
-            {
-                cout << "Invalid value [" << argv[voterPos] << "] specified for voter quantity" << endl;
-                printUsageMsg();
-                return;
-            } // if
-        } // case voterPos + 1
+            configFile = argv[filePos];
+        } // case filePos + 1
         case noArgs :
         {
             break;
@@ -89,19 +68,25 @@ void uMain::main()
         } // default
     } // switch
 
+    ConfigParams params;
+    processConfigFile( configFile.c_str() , params );
     mprng.seed( seedValue );
-    Printer * printer = new Printer( voterValue );
-    TallyVotes * tallier = new TallyVotes( groupValue , *printer );
-    Voter ** voters = (Voter**)malloc( sizeof(Voter*) * voterValue );
+    Printer * printer = new Printer( params.numStudents , params.numVendingMachines , params.numCouriers );
+    NameServer * nameServer = new NameServer( *printer , params.numVendingMachines , params.numStudents );
+    Bank * bank = new Bank( params.numStudents );
+    WATCardOffice * cardOffice = new WATCardOffice( *printer , *bank , params.numCouriers );
+    Student ** students = (Student**)malloc( sizeof(Student*) * params.numStudents );
 
-    for ( int i = 0 ; i < voterValue ; i += 1 )
-        voters[i] = new Voter( i , *tallier , *printer );
+    for ( unsigned int i = 0 ; i < params.numStudents ; i += 1 )
+        students[i] = new Student( *printer , *nameServer , *cardOffice , i , params.maxPurchases );
 
-    for ( int i = 0 ; i < voterValue ; i += 1 )
-        delete voters[i];
+    for ( unsigned int i = 0 ; i < params.numStudents ; i += 1 )
+        delete students[i];
 
-    delete voters;
-    delete tallier;
+    delete students;
+    delete cardOffice;
+    delete bank;
+    delete nameServer;
     delete printer;
 
     uRetCode = 0;

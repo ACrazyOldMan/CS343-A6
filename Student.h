@@ -1,9 +1,10 @@
 #ifndef Student_H
 #define Student_H
 
+#include "NameServer.h"
+#include "WATCardOffice.h"
+
 class Printer;
-class NameServer;
-class WATCardOffice;
 
 _Task Student
 {

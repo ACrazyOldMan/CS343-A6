@@ -1,5 +1,6 @@
 .project
 .cproject
-.o
-.d
+*.o
+*.d
 soda
+

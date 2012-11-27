@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-struct ConfigParms
+struct ConfigParams
 {
         unsigned int sodaCost;                      // MSRP per bottle
         unsigned int numStudents;                   // number of students to create
@@ -17,7 +17,6 @@ struct ConfigParms
         unsigned int numCouriers;                   // number of couriers in the pool
 };
 
-static bool comments( std::ifstream & in , std::string & name );
-void processConfigFile( const char * configFile , ConfigParms & params );
+void processConfigFile( const char * configFile , ConfigParams & params );
 
 #endif // CONFIG_H

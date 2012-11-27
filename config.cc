@@ -5,6 +5,12 @@
 
 using namespace std;
 
+/**
+ * @fn              comments
+ * @brief           Check for and ignore comments if found
+ * @param[in]       in      Input file stream
+ * @param[in,out]   name    Parameter name
+ */
 static bool comments( ifstream & in , string & name )
 {
     for ( ; ; )
@@ -23,8 +29,13 @@ static bool comments( ifstream & in , string & name )
     return false;
 } // comments
 
-// Process the configuration file to set the parameters of the simulation.
-void processConfigFile( const char * configFile , ConfigParms & params )
+/**
+ * @fn              processConfigFile
+ * @brief           Process the configuration file to set the parameters of the simulation
+ * @param[in]       configFile      Name of configuration file
+ * @param[in,out]   params          Struct containing parameters to be filled
+ */
+void processConfigFile( const char * configFile , ConfigParams & params )
 {
     const unsigned int Parmnum = 9;
 
