@@ -4,23 +4,29 @@
 #include <uC++.h>
 
 class Printer;
-class NameServer;
 class WATCard;
+_Task NameServer;
 
 _Task VendingMachine
 {
     public:
 
+    // flavours of soda
     enum Flavours
     {
-    };          // flavours of soda (YOU DEFINE)
+        Apple = 0,
+        Orange,
+        Grape,
+        Cranberry
+    };
 
+    // purchase status: successful buy, out of stock, insufficient funds
     enum Status
     {
         BUY,
         STOCK,
         FUNDS
-    };          // purchase status: successful buy, out of stock, insufficient funds
+    };
 
     VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost, unsigned int maxStockPerFlavour );
 
@@ -29,7 +35,7 @@ _Task VendingMachine
     void restocked();
 
     _Nomutex unsigned int cost();
-    _Nomutex unsigned int getId();
+    _Nomutex unsigned int getID();
 
     private:
 

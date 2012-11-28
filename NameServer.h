@@ -4,7 +4,7 @@
 #include <uC++.h>
 
 class Printer;
-class VendingMachine;
+_Task VendingMachine;
 
 _Task NameServer
 {

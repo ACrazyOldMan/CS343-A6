@@ -17,11 +17,9 @@ using namespace std;
  * @param[in]   numCouriers             Number of couriers
  */
 Printer::Printer( unsigned int numStudents , unsigned int numVendingMachines , unsigned int numCouriers )
+        : studentQuantity( numStudents ), machineQuantity( numVendingMachines ), courierQuantity( numCouriers )
 {
     const unsigned int totalQuantity = (SINGLETON_QUANTITY + numStudents + numVendingMachines + numCouriers);
-    studentQuantity = numStudents;
-    machineQuantity = numVendingMachines;
-    courierQuantity = numCouriers;
     stateStorage = (States*)malloc( sizeof(States) * totalQuantity );
     valueStorage = (unsigned int*)malloc( sizeof(unsigned int) * totalQuantity * 2 );
 

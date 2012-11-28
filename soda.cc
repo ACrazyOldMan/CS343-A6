@@ -9,6 +9,9 @@
 #include "Bank.h"
 #include "WATCardOffice.h"
 #include "Student.h"
+#include "WATCard.h"
+#include "VendingMachine.h"
+#include "States.h"
 
 using namespace std;
 
@@ -20,6 +23,56 @@ MPRNG mprng; // global instance of MPRNG
  */
 void Student::main()
 {
+    VendingMachine::Flavours flavour = (VendingMachine::Flavours)mprng( 3 );
+    unsigned int totalPurchases = mprng( 1 , maxPurchases );
+    printer->print( Printer::Student , id , Starting , flavour , totalPurchases );
+    unsigned int purchaseCounter = 0;
+    FWATCard fCard = office->create( id , 5 );
+    VendingMachine * machine = server->getMachine( id );
+    printer->print( Printer::Student , id , SelectingMachine , machine->getID() );
+
+    while ( purchaseCounter < totalPurchases )
+    {
+        yield( mprng( 1 , 10 ) );
+
+        // keep trying to buy soda until successful
+        while ( true )
+        {
+            try
+            {
+                WATCard * card = fCard();
+                VendingMachine::Status status = machine->buy( flavour , *card );
+
+                switch ( status )
+                {
+                    case VendingMachine::BUY :
+                    {
+                        printer->print( Printer::Student , id , BoughtSoda , card->getBalance() );
+                        purchaseCounter += 1;
+                        continue;
+                    } // case VendingMachine::BUY
+                    case VendingMachine::STOCK :
+                    {
+                        machine = server->getMachine( id );
+                        printer->print( Printer::Student , id , SelectingMachine , machine->getID() );
+                        break;
+                    } // case VendingMachine::STOCK
+                    case VendingMachine::FUNDS :
+                    {
+                        printer->print( Printer::Student , id , LostCard );
+                        fCard = office->transfer( id , machine->cost() + 5 , card );
+                        break;
+                    } // case VendingMachine::FUNDS
+                } // switch
+            }
+            catch ( WATCardOffice::Lost ) // WATCard lost
+            {
+                fCard = office->create( id , 5 );
+            } // try
+        } // while
+    } // while
+
+    printer->print( Printer::Student , id , Finished );
 }
 
 /**

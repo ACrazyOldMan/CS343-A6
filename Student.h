@@ -14,6 +14,12 @@ _Task Student
 
     private:
 
+    Printer * printer; // reference to Printer
+    NameServer * server;// reference to NameServer
+    WATCardOffice * office;// reference to WATCardOffice
+    unsigned int id;// student ID
+    unsigned int maxPurchases;// maximum number of purchases that can be made
+
     void main();
 
 };
