@@ -1,6 +1,7 @@
 #ifndef WATCard_H
 #define WATCard_H
 
+#include <uC++.h>
 #include <uFuture.h>
 
 class WATCard
@@ -14,6 +15,9 @@ class WATCard
         unsigned int getBalance();
 
     private:
+
+        unsigned int balance; // balance of card
+        uOwnerLock balanceLock; // prevent simultaneous access to card balance
 
         // prevent copying
         WATCard( const WATCard & );
