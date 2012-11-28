@@ -12,10 +12,39 @@
 #include "WATCard.h"
 #include "VendingMachine.h"
 #include "States.h"
+#include "Parent.h"
 
 using namespace std;
 
 MPRNG mprng; // global instance of MPRNG
+
+/**
+ * @fn      Parent::main
+ * @brief   Main loop of Parent
+ */
+void Parent::main()
+{
+    printer->print( Printer::Parent , Starting );
+
+    while ( true )
+    {
+        // accept destructor so task exits gracefully; meanwhile, deposit gifts at random
+        _Accept( ~Parent )
+        {
+            break;
+        }
+        else
+        {
+            yield( delay );
+            unsigned int sID = mprng( studentQuantity - 1 );
+            unsigned int amount = mprng( 1 , 3 );
+            printer->print( Printer::Parent , Deposit , sID , amount );
+            bank->deposit( sID , amount );
+        } // _Accept
+    } // while
+
+    printer->print( Printer::Parent , Finished );
+}
 
 /**
  * @fn      Student::main
@@ -125,8 +154,9 @@ void uMain::main()
     processConfigFile( configFile.c_str() , params );
     mprng.seed( seedValue );
     Printer * printer = new Printer( params.numStudents , params.numVendingMachines , params.numCouriers );
-    NameServer * nameServer = new NameServer( *printer , params.numVendingMachines , params.numStudents );
     Bank * bank = new Bank( params.numStudents );
+    Parent * parent = new Parent( *printer , *bank , params.numStudents , params.parentalDelay );
+    NameServer * nameServer = new NameServer( *printer , params.numVendingMachines , params.numStudents );
     WATCardOffice * cardOffice = new WATCardOffice( *printer , *bank , params.numCouriers );
     Student ** students = (Student**)malloc( sizeof(Student*) * params.numStudents );
 
@@ -138,8 +168,9 @@ void uMain::main()
 
     delete students;
     delete cardOffice;
-    delete bank;
     delete nameServer;
+    delete parent;
+    delete bank;
     delete printer;
 
     uRetCode = 0;

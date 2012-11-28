@@ -14,6 +14,11 @@ _Task Parent
 
     private:
 
+    Printer * printer; // reference to Printer
+    Bank * bank;//reference to Bank
+    unsigned int studentQuantity;// number of students
+    unsigned int delay;// delay for depositing gifts
+
     void main();
 
 };
