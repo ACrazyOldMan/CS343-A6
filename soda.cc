@@ -21,6 +21,68 @@ using namespace std;
 MPRNG mprng; // global instance of MPRNG
 
 /**
+ * @fn      Truck::main
+ * @brief   Main loop of Truck
+ */
+void Truck::main()
+{
+    printer->print( Printer::Truck , Starting );
+    VendingMachine ** machines = server->getMachineList();
+    unsigned int cargo[FLAVOUR_QUANTITY];
+    unsigned int totalCargo = 0;
+    yield( mprng( 1 , 10 ) );
+
+    while ( !plant->getShipment( cargo ) )
+    {
+        for ( unsigned int i = 0 ; i < FLAVOUR_QUANTITY ; i += 1 )
+            totalCargo += cargo[i];
+
+        printer->print( Printer::Truck , Pickup , totalCargo );
+
+        for ( unsigned int i = 0 ; i < machineQuantity ; i += 1 )
+        {
+            if ( totalCargo == 0 )
+                break;
+
+            VendingMachine * vm = machines[i];
+            printer->print( Printer::Truck , BeginDelivery , vm->getID() , totalCargo );
+            unsigned int totalMissing = 0; // total number of bottles not filled
+            unsigned int * inventory = vm->inventory();
+
+            for ( unsigned int j = 0 ; j < FLAVOUR_QUANTITY ; j += 1 )
+            {
+                unsigned int inv = inventory[j];
+                unsigned int miss = maxStock - inv;
+
+                // check if enough cargo to fill all
+                if ( miss > cargo[j] )
+                {
+                    inventory[j] += cargo[j];
+                    totalCargo -= cargo[j];
+                    cargo[j] = 0;
+                    totalMissing += maxStock - inventory[j];
+                }
+                else
+                {
+                    inventory[i] = maxStock;
+                    totalCargo -= miss;
+                    cargo[j] -= miss;
+                } // if
+            } // for
+
+            vm->restocked();
+
+            if ( totalMissing > 0 )
+                printer->print( Printer::Truck , CannotFill , vm->getID() , totalMissing );
+
+            printer->print( Printer::Truck , EndDelivery , vm->getID() , totalCargo );
+        } // for
+    } // while
+
+    printer->print( Printer::Truck , Finished );
+}
+
+/**
  * @fn      BottlingPlant::main
  * @brief   Main loop of BottlingPlant
  */

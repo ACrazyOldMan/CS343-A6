@@ -1,7 +1,7 @@
 CXX = u++								# compiler
 CXXFLAGS = -g -Wall -Wno-unused-label -MMD				# compiler flags
 
-OBJECTS = soda.o config.o Printer.o Student.o WATCard.o Bank.o Parent.o VendingMachine.o NameServer.o WATCardOffice.o #Bank.o  
+OBJECTS = soda.o config.o Printer.o Student.o WATCard.o Bank.o Parent.o VendingMachine.o NameServer.o WATCardOffice.o BottlingPlant.o Truck.o
 EXEC = soda
 DEPENDS = ${OBJECTS:.o=.d}						# substitute ".o" with ".d"
 EXECS = ${EXEC}						# all executables

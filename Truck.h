@@ -15,6 +15,12 @@ _Task Truck
 
     private:
 
+    Printer * printer; // Printer reference
+    NameServer * server;// NameServer reference
+    BottlingPlant * plant;// BottlingPlant reference
+    unsigned int machineQuantity;// number of vending machines
+    unsigned int maxStock;// maximum machine inventory per flavour
+
     void main();
 
 };
