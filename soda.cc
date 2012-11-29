@@ -64,7 +64,7 @@ void Truck::main()
                 }
                 else
                 {
-                    inventory[i] = maxStock;
+                    inventory[j] = maxStock;
                     totalCargo -= miss;
                     cargo[j] -= miss;
                 } // if
@@ -77,6 +77,8 @@ void Truck::main()
 
             printer->print( Printer::Truck , EndDelivery , vm->getID() , totalCargo );
         } // for
+
+        totalCargo = 0;
     } // while
 
     printer->print( Printer::Truck , Finished );
@@ -142,6 +144,11 @@ void WATCardOffice::Courier::main()
         else
         {
             Job * job = office->requestWork();
+
+            // if no job and returns, means office is closing
+            if ( job == NULL )
+                break;
+
             unsigned int sID = job->args.sID;
             unsigned int amount = job->args.amount;
             WATCard * card = job->args.card;
@@ -226,7 +233,7 @@ void Student::main()
                     {
                         printer->print( Printer::Student , id , BoughtSoda , card->getBalance() );
                         purchaseCounter += 1;
-                        continue;
+                        goto NextBottle;
                     } // case VendingMachine::BUY
                     case VendingMachine::STOCK :
                     {
@@ -236,7 +243,6 @@ void Student::main()
                     } // case VendingMachine::STOCK
                     case VendingMachine::FUNDS :
                     {
-                        printer->print( Printer::Student , id , LostCard );
                         fCard = office->transfer( id , machine->cost() + 5 , card );
                         break;
                     } // case VendingMachine::FUNDS
@@ -244,9 +250,12 @@ void Student::main()
             }
             catch ( WATCardOffice::Lost ) // WATCard lost
             {
+                printer->print( Printer::Student , id , LostCard );
                 fCard = office->create( id , 5 );
             } // try
         } // while
+
+        NextBottle:;
     } // while
 
     printer->print( Printer::Student , id , Finished );
@@ -304,14 +313,15 @@ void uMain::main()
     Printer * printer = new Printer( params.numStudents , params.numVendingMachines , params.numCouriers );
     Bank * bank = new Bank( params.numStudents );
     Parent * parent = new Parent( *printer , *bank , params.numStudents , params.parentalDelay );
-    NameServer * server = new NameServer( *printer , params.numVendingMachines , params.numStudents );
     WATCardOffice * office = new WATCardOffice( *printer , *bank , params.numCouriers );
-    BottlingPlant * plant = new BottlingPlant( *printer , *server , params.numVendingMachines , params.maxShippedPerFlavour , params.maxStockPerFlavour , params.timeBetweenShipments );
+    NameServer * server = new NameServer( *printer , params.numVendingMachines , params.numStudents );
     VendingMachine ** machines = (VendingMachine**)malloc( sizeof(VendingMachine*) * params.numVendingMachines );
-    Student ** students = (Student**)malloc( sizeof(Student*) * params.numStudents );
 
     for ( unsigned int i = 0 ; i < params.numVendingMachines ; i += 1 )
         machines[i] = new VendingMachine( *printer , *server , i , params.sodaCost , params.maxStockPerFlavour );
+
+    BottlingPlant * plant = new BottlingPlant( *printer , *server , params.numVendingMachines , params.maxShippedPerFlavour , params.maxStockPerFlavour , params.timeBetweenShipments );
+    Student ** students = (Student**)malloc( sizeof(Student*) * params.numStudents );
 
     for ( unsigned int i = 0 ; i < params.numStudents ; i += 1 )
         students[i] = new Student( *printer , *server , *office , i , params.maxPurchases );
@@ -319,14 +329,15 @@ void uMain::main()
     for ( unsigned int i = 0 ; i < params.numStudents ; i += 1 )
         delete students[i];
 
+    delete students;
+    delete plant;
+
     for ( unsigned int i = 0 ; i < params.numVendingMachines ; i += 1 )
         delete machines[i];
 
-    delete students;
     delete machines;
-    delete plant;
-    delete office;
     delete server;
+    delete office;
     delete parent;
     delete bank;
     delete printer;

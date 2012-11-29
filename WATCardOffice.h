@@ -68,6 +68,7 @@ _Task WATCardOffice
 
     unsigned int courierQuantity;// number of couriers
     std::queue< Job* > jobQueue;// queue of jobs for couriers
+    bool isClosing;// flag to indicate office is closing
 
     void main();
 

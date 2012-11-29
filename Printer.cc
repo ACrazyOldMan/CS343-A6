@@ -243,7 +243,7 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                         {
                             switch ( prevState )
                             {
-                                case CreationComplete :
+                                case CardCreation :
                                 case EndTransfer :
                                 {
                                     s += i2s( valueStorage[i * 2] ) + "," + i2s( valueStorage[i * 2 + 1] );

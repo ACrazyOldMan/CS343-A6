@@ -14,7 +14,7 @@ Bank * WATCardOffice::bank = NULL;
  * @param[in]   numCouriers     Number of couriers
  */
 WATCardOffice::WATCardOffice( Printer &prt , Bank &bank , unsigned int numCouriers )
-        : courierQuantity( numCouriers )
+        : courierQuantity( numCouriers ), isClosing( false )
 {
     WATCardOffice::office = this;
     WATCardOffice::printer = &prt;
@@ -64,6 +64,9 @@ FWATCard WATCardOffice::transfer( unsigned int sid , unsigned int amount , WATCa
  */
 WATCardOffice::Job * WATCardOffice::requestWork()
 {
+    if ( isClosing )
+        return NULL;
+
     return jobQueue.front();
 }
 
@@ -84,6 +87,7 @@ void WATCardOffice::main()
         // accept destructor so task exits gracefully; meanwhile, perform various functionalities
         _Accept( ~WATCardOffice )
         {
+            isClosing = true;
             break;
         }
         or _When( jobQueue.size() > 0 ) _Accept( requestWork )
@@ -93,7 +97,7 @@ void WATCardOffice::main()
         or _Accept( create )
         {
             Job * added = jobQueue.back();
-            printer->print( Printer::WATCardOffice , CreationComplete , added->args.sID , added->args.amount );
+            printer->print( Printer::WATCardOffice , CardCreation , added->args.sID , added->args.amount );
         }
         or _Accept( transfer )
         {
@@ -103,7 +107,17 @@ void WATCardOffice::main()
     } // while
 
     for ( unsigned int i = 0 ; i < courierQuantity ; i += 1 )
+    {
+        // make sure no couriers are stuck waiting for jobs
+        _Accept( requestWork )
+        {
+        }
+        else
+        {
+        }
+
         delete couriers[i];
+    }
 
     delete couriers;
     printer->print( Printer::WATCardOffice , Finished );

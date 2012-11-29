@@ -7,7 +7,7 @@ enum States
     Finished = 'F',
     Deposit = 'D',
     CourierComplete = 'W',
-    CreationComplete = 'C',
+    CardCreation = 'C',
     RegisterMachine = 'R',
     NewMachine = 'N',
     Pickup = 'P',
