@@ -15,7 +15,7 @@ _Monitor Bank
     private:
 
         unsigned int * balances; // bank balances for each student
-        uCondition * enoughFunds; // conditions for waiting until enough funds present for account; greater concurrency than external scheduling since can selectively choose which task to block/unblock
+        uCondition ** enoughFunds; // conditions for waiting until enough funds present for account; greater concurrency than external scheduling since can selectively choose which task to block/unblock
         unsigned int * currentWithdrawal; // amount being blocked on for current withdrawal
 
 };
