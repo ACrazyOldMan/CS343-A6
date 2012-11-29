@@ -12,7 +12,7 @@ _Task NameServer
 
     NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents );
 
-    void VMregister( VendingMachine * vendingmachine );
+    void registerVM( VendingMachine * vendingmachine );
     VendingMachine * getMachine( unsigned int id );
     VendingMachine ** getMachineList();
 

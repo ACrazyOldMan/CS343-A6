@@ -39,6 +39,14 @@ _Task VendingMachine
 
     private:
 
+    Printer * printer; // reference to Printer
+    unsigned int id;// machine ID
+    unsigned int sodaCost;// soda cost
+    unsigned int maxStock;// max stock per flavour
+    unsigned int * sodaInventory;// currently available stock per flavour
+    bool isRestocking;// flag to indicate restocking event
+    unsigned int flavourPurchased;// stores information about purchased soda; allows for more concurrent processing
+
     void main();
 
 };
