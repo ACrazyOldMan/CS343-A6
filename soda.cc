@@ -13,10 +13,54 @@
 #include "VendingMachine.h"
 #include "States.h"
 #include "Parent.h"
+#include "BottlingPlant.h"
+#include "Truck.h"
 
 using namespace std;
 
 MPRNG mprng; // global instance of MPRNG
+
+/**
+ * @fn      BottlingPlant::main
+ * @brief   Main loop of BottlingPlant
+ */
+void BottlingPlant::main()
+{
+    printer->print( Printer::BottlingPlant , Starting );
+    Truck * truck = new Truck( *printer , *server , *this , machineQuantity , maxStock );
+
+    while ( true )
+    {
+        // accept destructor so task exits gracefully; meanwhile, keep producing soda
+        _Accept( ~BottlingPlant )
+        {
+            break;
+        }
+        else
+        {
+            totalProduced = 0;
+
+            for ( unsigned int i = 0 ; i < FLAVOUR_QUANTITY ; i += 1 )
+            {
+                production[i] = mprng( maxShipped );
+                totalProduced += production[i];
+            } // for
+
+            yield( delay );
+            printer->print( Printer::BottlingPlant , GeneratingSoda , totalProduced );
+
+            _Accept( getShipment )
+            {
+                printer->print( Printer::BottlingPlant , Pickup );
+            } // _Accept
+        } // _Accept
+    } // while
+
+    isShuttingDown = true;
+    _Accept( getShipment );
+    delete truck;
+    printer->print( Printer::BottlingPlant , Finished );
+}
 
 /**
  * @fn      Courier::main
@@ -28,6 +72,7 @@ void WATCardOffice::Courier::main()
 
     while ( true )
     {
+        // accept destructor so task exits gracefully; meanwhile, keep working on jobs
         _Accept( ~Courier )
         {
             break;
@@ -199,6 +244,7 @@ void uMain::main()
     Parent * parent = new Parent( *printer , *bank , params.numStudents , params.parentalDelay );
     NameServer * server = new NameServer( *printer , params.numVendingMachines , params.numStudents );
     WATCardOffice * office = new WATCardOffice( *printer , *bank , params.numCouriers );
+    BottlingPlant * plant = new BottlingPlant( *printer , *server , params.numVendingMachines , params.maxShippedPerFlavour , params.maxStockPerFlavour , params.timeBetweenShipments );
     VendingMachine ** machines = (VendingMachine**)malloc( sizeof(VendingMachine*) * params.numVendingMachines );
     Student ** students = (Student**)malloc( sizeof(Student*) * params.numStudents );
 
@@ -216,6 +262,7 @@ void uMain::main()
 
     delete students;
     delete machines;
+    delete plant;
     delete office;
     delete server;
     delete parent;

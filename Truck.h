@@ -4,8 +4,8 @@
 #include <uC++.h>
 
 class Printer;
-class NameServer;
-class BottlingPlant;
+_Task NameServer;
+_Task BottlingPlant;
 
 _Task Truck
 {
