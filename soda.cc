@@ -156,19 +156,27 @@ void uMain::main()
     Printer * printer = new Printer( params.numStudents , params.numVendingMachines , params.numCouriers );
     Bank * bank = new Bank( params.numStudents );
     Parent * parent = new Parent( *printer , *bank , params.numStudents , params.parentalDelay );
-    NameServer * nameServer = new NameServer( *printer , params.numVendingMachines , params.numStudents );
-    WATCardOffice * cardOffice = new WATCardOffice( *printer , *bank , params.numCouriers );
+    NameServer * server = new NameServer( *printer , params.numVendingMachines , params.numStudents );
+    WATCardOffice * office = new WATCardOffice( *printer , *bank , params.numCouriers );
+    VendingMachine ** machines = (VendingMachine**)malloc( sizeof(VendingMachine*) * params.numVendingMachines );
     Student ** students = (Student**)malloc( sizeof(Student*) * params.numStudents );
 
+    for ( unsigned int i = 0 ; i < params.numVendingMachines ; i += 1 )
+        machines[i] = new VendingMachine( *printer , *server , i , params.sodaCost , params.maxStockPerFlavour );
+
     for ( unsigned int i = 0 ; i < params.numStudents ; i += 1 )
-        students[i] = new Student( *printer , *nameServer , *cardOffice , i , params.maxPurchases );
+        students[i] = new Student( *printer , *server , *office , i , params.maxPurchases );
 
     for ( unsigned int i = 0 ; i < params.numStudents ; i += 1 )
         delete students[i];
 
+    for ( unsigned int i = 0 ; i < params.numVendingMachines ; i += 1 )
+        delete machines[i];
+
     delete students;
-    delete cardOffice;
-    delete nameServer;
+    delete machines;
+    delete office;
+    delete server;
     delete parent;
     delete bank;
     delete printer;
