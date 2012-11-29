@@ -318,6 +318,9 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                         } // case BottlingPlant
                     } // switch
                 } // if
+
+                cout << s;
+                stateStorage[i] = Finished;
             } // if
         } // for
 
