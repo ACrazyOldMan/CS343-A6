@@ -27,15 +27,15 @@ Printer::Printer( unsigned int numStudents , unsigned int numVendingMachines , u
     {
         string s;
 
-        if ( i > SINGLETON_QUANTITY + numStudents + numVendingMachines ) // couriers
+        if ( i >= SINGLETON_QUANTITY + numStudents + numVendingMachines ) // couriers
         {
             s = "Cour" + i2s( i - SINGLETON_QUANTITY - numStudents - numVendingMachines );
         }
-        else if ( i > SINGLETON_QUANTITY + numStudents ) // vending machines
+        else if ( i >= SINGLETON_QUANTITY + numStudents ) // vending machines
         {
             s = "Mach" + i2s( i - SINGLETON_QUANTITY - numStudents );
         }
-        else if ( i > SINGLETON_QUANTITY ) // students
+        else if ( i >= SINGLETON_QUANTITY ) // students
         {
             s = "Stud" + i2s( i - SINGLETON_QUANTITY );
         }
@@ -157,7 +157,7 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                 string s = "";
                 s += stateStorage[i];
 
-                if ( i > SINGLETON_QUANTITY + studentQuantity + machineQuantity ) // couriers
+                if ( i >= SINGLETON_QUANTITY + studentQuantity + machineQuantity ) // couriers
                 {
                     prevState = getState( Courier , lid );
 
@@ -174,7 +174,7 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                         } // default
                     } // switch
                 }
-                else if ( i > SINGLETON_QUANTITY + studentQuantity ) // vending machines
+                else if ( i >= SINGLETON_QUANTITY + studentQuantity ) // vending machines
                 {
                     prevState = getState( Vending , lid );
 
@@ -195,7 +195,7 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                         } // default
                     } // switch
                 }
-                else if ( i > SINGLETON_QUANTITY ) // students
+                else if ( i >= SINGLETON_QUANTITY ) // students
                 {
                     prevState = getState( Student , lid );
 

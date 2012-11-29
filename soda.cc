@@ -19,6 +19,47 @@ using namespace std;
 MPRNG mprng; // global instance of MPRNG
 
 /**
+ * @fn      Courier::main
+ * @brief   Main loop of Courier
+ */
+void WATCardOffice::Courier::main()
+{
+    printer->print( Printer::Courier , id , Starting );
+
+    while ( true )
+    {
+        _Accept( ~Courier )
+        {
+            break;
+        }
+        else
+        {
+            Job * job = office->requestWork();
+            unsigned int sID = job->args.sID;
+            unsigned int amount = job->args.amount;
+            WATCard * card = job->args.card;
+            printer->print( Printer::Courier , id , BeginTransfer , sID , amount );
+            bank->withdraw( sID , amount );
+            printer->print( Printer::Courier , id , EndTransfer , sID , amount );
+
+            // test for lost card
+            if ( mprng( 5 ) == 0 )
+            {
+                job->result.exception( new Lost() );
+                delete card;
+            }
+            else
+            {
+                card->deposit( amount );
+                job->result.delivery( card );
+            } // if
+        } // _Accept
+    } // while
+
+    printer->print( Printer::Courier , id , Finished );
+}
+
+/**
  * @fn      Parent::main
  * @brief   Main loop of Parent
  */
