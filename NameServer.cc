@@ -10,7 +10,7 @@
  * @param[in]   numStudents         Number of students
  */
 NameServer::NameServer( Printer &prt , unsigned int numVendingMachines , unsigned int numStudents )
-        : printer( &prt ), counter( 0 )
+        : printer( &prt ), machineQuantity( numVendingMachines ), counter( 0 )
 {
     machines = (VendingMachine**)malloc( sizeof(VendingMachine*) * numVendingMachines );
     assignedMachines = (unsigned int*)malloc( sizeof(unsigned int) * numStudents );

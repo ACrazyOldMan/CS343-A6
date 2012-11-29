@@ -3,6 +3,8 @@
 
 #include <uC++.h>
 
+#define FLAVOUR_QUANTITY    4
+
 class Printer;
 class WATCard;
 _Task NameServer;
@@ -39,7 +41,8 @@ _Task VendingMachine
 
     private:
 
-    Printer * printer; // reference to Printer
+    Printer * printer; // Printer reference
+    NameServer * server; // NameServer reference
     unsigned int id;// machine ID
     unsigned int sodaCost;// soda cost
     unsigned int maxStock;// max stock per flavour

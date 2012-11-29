@@ -4,8 +4,6 @@
 #include "Printer.h"
 #include "States.h"
 
-#define FLAVOUR_QUANTITY    4
-
 /**
  * @brief       Constructor for VendingMachine
  * @param[in]   prt                 Printer reference
@@ -15,9 +13,8 @@
  * @param[in]   maxStockPerFlavour  Maximum inventory stock per flavour
  */
 VendingMachine::VendingMachine( Printer &prt , NameServer &nameServer , unsigned int id , unsigned int sodaCost , unsigned int maxStockPerFlavour )
-        : printer( &prt ), id( id ), sodaCost( sodaCost ), maxStock( maxStockPerFlavour ), isRestocking( false ), flavourPurchased( -1 )
+        : printer( &prt ), server( &nameServer ), id( id ), sodaCost( sodaCost ), maxStock( maxStockPerFlavour ), isRestocking( false ), flavourPurchased( -1 )
 {
-    nameServer.registerVM( this );
     sodaInventory = (unsigned int*)malloc( sizeof(unsigned int) * FLAVOUR_QUANTITY );
 
     for ( unsigned int i = 0 ; i < FLAVOUR_QUANTITY ; i += 1 )
@@ -89,6 +86,7 @@ _Nomutex unsigned int VendingMachine::getID()
 void VendingMachine::main()
 {
     printer->print( Printer::Vending , id , Starting , sodaCost );
+    server->registerVM( this );
 
     while ( true )
     {
