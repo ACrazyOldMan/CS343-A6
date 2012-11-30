@@ -22,6 +22,14 @@ VendingMachine::VendingMachine( Printer &prt , NameServer &nameServer , unsigned
 }
 
 /**
+ * @brief       Destructor for VendingMachine
+ */
+VendingMachine::~VendingMachine()
+{
+    delete sodaInventory;
+}
+
+/**
  * @fn          VendingMachine::buy
  * @brief       Buy soda if possible
  * @param[in]   flavour     Soda flavour

@@ -210,7 +210,7 @@ void Parent::main()
  */
 void Student::main()
 {
-    VendingMachine::Flavours flavour = (VendingMachine::Flavours)mprng( 3 );
+    VendingMachine::Flavours flavour = (VendingMachine::Flavours)mprng( FLAVOUR_QUANTITY - 1 );
     unsigned int totalPurchases = mprng( 1 , maxPurchases );
     printer->print( Printer::Student , id , Starting , flavour , totalPurchases );
     unsigned int purchaseCounter = 0;

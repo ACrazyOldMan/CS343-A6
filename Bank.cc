@@ -4,6 +4,7 @@
  * @brief       Constructor for Bank
  */
 Bank::Bank( unsigned int numStudents )
+        : studentQuantity( numStudents )
 {
     balances = (unsigned int*)malloc( sizeof(unsigned int) * numStudents );
     enoughFunds = (uCondition**)malloc( sizeof(uCondition*) * numStudents );
@@ -14,6 +15,19 @@ Bank::Bank( unsigned int numStudents )
         balances[i] = 0;
         enoughFunds[i] = new uCondition();
     } // for
+}
+
+/**
+ * @brief       Destructor for Bank
+ */
+Bank::~Bank()
+{
+    for ( unsigned int i = 0 ; i < studentQuantity ; i += 1 )
+        delete enoughFunds[i];
+
+    delete balances;
+    delete enoughFunds;
+    delete currentWithdrawal;
 }
 
 /**

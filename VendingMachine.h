@@ -31,6 +31,7 @@ _Task VendingMachine
     };
 
     VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost, unsigned int maxStockPerFlavour );
+    ~VendingMachine();
 
     Status buy( Flavours flavour, WATCard &card );
     unsigned int * inventory();
@@ -42,7 +43,7 @@ _Task VendingMachine
     private:
 
     Printer * printer; // Printer reference
-    NameServer * server; // NameServer reference
+    NameServer * server;// NameServer reference
     unsigned int id;// machine ID
     unsigned int sodaCost;// soda cost
     unsigned int maxStock;// max stock per flavour

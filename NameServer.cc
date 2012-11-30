@@ -20,6 +20,15 @@ NameServer::NameServer( Printer &prt , unsigned int numVendingMachines , unsigne
 }
 
 /**
+ * @brief       Destructor for NameServer
+ */
+NameServer::~NameServer()
+{
+    delete machines;
+    delete assignedMachines;
+}
+
+/**
  * @fn          NameServer::registerVM
  * @brief       Register vending machine
  * @param[in]   vm      Vending machine reference

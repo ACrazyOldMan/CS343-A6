@@ -17,6 +17,14 @@ BottlingPlant::BottlingPlant( Printer &prt , NameServer &nameServer , unsigned i
 }
 
 /**
+ * @brief       Destructor for BottlingPlant
+ */
+BottlingPlant::~BottlingPlant()
+{
+    delete production;
+}
+
+/**
  * @fn              BottlingPlant::getShipment
  * @brief           Get new shipment
  * @param[in,out]   cargo       Storage for new shipment
