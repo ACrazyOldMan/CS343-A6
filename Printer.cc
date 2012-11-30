@@ -147,14 +147,14 @@ void Printer::print( Kind kind , unsigned int lid , States state )
         for ( unsigned int i = 0 ; i < totalQuantity ; i += 1 )
         {
             cout << setw( COLUMN_WIDTH ) << left;
+            prevState = stateStorage[i];
 
-            if ( stateStorage[i] == Finished )
+            if ( prevState == Finished )
             {
                 cout << "";
             }
             else
             {
-                prevState = stateStorage[i];
                 string s = "";
                 s += prevState;
 
