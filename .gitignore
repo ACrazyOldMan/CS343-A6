@@ -4,3 +4,4 @@
 *.d
 soda
 .fuse*
+debug.*
