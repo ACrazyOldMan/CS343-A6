@@ -79,6 +79,7 @@ void Truck::main()
         } // for
 
         totalCargo = 0;
+        yield( mprng( 1 , 10 ) );
     } // while
 
     printer->print( Printer::Truck , Finished );
