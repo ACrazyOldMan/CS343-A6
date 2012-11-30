@@ -142,7 +142,7 @@ void Printer::print( Kind kind , unsigned int lid , States state )
     const unsigned int totalQuantity = SINGLETON_QUANTITY + studentQuantity + machineQuantity + courierQuantity;
     States prevState = getState( kind , lid );
 
-    if ( prevState != Finished && prevState != state )
+    if ( prevState != Finished )
     {
         for ( unsigned int i = 0 ; i < totalQuantity ; i += 1 )
         {
