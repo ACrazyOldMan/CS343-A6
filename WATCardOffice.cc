@@ -6,6 +6,7 @@
 WATCardOffice * WATCardOffice::office = NULL;
 Printer * WATCardOffice::printer = NULL;
 Bank * WATCardOffice::bank = NULL;
+unsigned int WATCardOffice::courierCount = 0;
 
 /**
  * @brief       Constructor for Parent
@@ -23,11 +24,11 @@ WATCardOffice::WATCardOffice( Printer &prt , Bank &bank , unsigned int numCourie
 
 /**
  * @brief       Constructor for Courier
- * @param[in]   id      Courier ID
  */
-WATCardOffice::Courier::Courier( unsigned int id )
-        : id( id )
+WATCardOffice::Courier::Courier()
 {
+    id = courierCount;
+    courierCount += 1;
 }
 
 /**
@@ -64,8 +65,12 @@ FWATCard WATCardOffice::transfer( unsigned int sid , unsigned int amount , WATCa
  */
 WATCardOffice::Job * WATCardOffice::requestWork()
 {
+    // if office closing, tell each courier no more jobs left so they can finish
     if ( isClosing )
+    {
+        courierCount -= 1;
         return NULL;
+    } // if
 
     return jobQueue.front();
 }
@@ -80,7 +85,7 @@ void WATCardOffice::main()
     Courier ** couriers = (Courier**)malloc( sizeof(Courier*) * courierQuantity );
 
     for ( unsigned int i = 0 ; i < courierQuantity ; i += 1 )
-        couriers[i] = new Courier( i );
+        couriers[i] = new Courier();
 
     while ( true )
     {
@@ -106,18 +111,19 @@ void WATCardOffice::main()
         } // _Accept
     } // while
 
-    for ( unsigned int i = 0 ; i < courierQuantity ; i += 1 )
+    // make sure no couriers are stuck waiting for jobs
+    while ( courierCount > 0 )
     {
-        // make sure no couriers are stuck waiting for jobs
         _Accept( requestWork )
         {
         }
         else
         {
         }
+    } // while
 
+    for ( unsigned int i = 0 ; i < courierQuantity ; i += 1 )
         delete couriers[i];
-    }
 
     delete couriers;
     printer->print( Printer::WATCardOffice , Finished );

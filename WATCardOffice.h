@@ -53,7 +53,7 @@ _Task WATCardOffice
     {
         public:
 
-        Courier( unsigned int id );
+        Courier();
 
         private:
 
@@ -62,9 +62,11 @@ _Task WATCardOffice
         void main();
     };
 
-    static WATCardOffice * office; // WATCardOffice reference
+    // since Courier only has a default constructor, have to use static references for communication
+    static WATCardOffice * office;// WATCardOffice reference
     static Printer * printer;// Printer reference
     static Bank * bank;// Bank reference
+    static unsigned int courierCount;// count of currently initialized couriers
 
     unsigned int courierQuantity;// number of couriers
     std::queue< Job* > jobQueue;// queue of jobs for couriers
