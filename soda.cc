@@ -167,6 +167,9 @@ void WATCardOffice::Courier::main()
                 card->deposit( amount );
                 job->result.delivery( card );
             } // if
+
+            delete job;
+            printer->print( Printer::WATCardOffice , CourierComplete );
         } // _Accept
     } // while
 
@@ -215,7 +218,7 @@ void Student::main()
     VendingMachine * machine = server->getMachine( id );
     printer->print( Printer::Student , id , SelectingMachine , machine->getID() );
 
-    while ( purchaseCounter < totalPurchases )
+    while ( true )
     {
         yield( mprng( 1 , 10 ) );
 
@@ -255,7 +258,13 @@ void Student::main()
             } // try
         } // while
 
-        NextBottle:;
+        NextBottle :
+
+        if ( purchaseCounter == totalPurchases )
+        {
+            delete fCard();
+            break;
+        }
     } // while
 
     printer->print( Printer::Student , id , Finished );

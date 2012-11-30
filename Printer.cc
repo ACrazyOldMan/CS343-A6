@@ -154,13 +154,12 @@ void Printer::print( Kind kind , unsigned int lid , States state )
             }
             else
             {
+                prevState = stateStorage[i];
                 string s = "";
-                s += stateStorage[i];
+                s += prevState;
 
                 if ( i >= SINGLETON_QUANTITY + studentQuantity + machineQuantity ) // couriers
                 {
-                    prevState = getState( Courier , lid );
-
                     switch ( prevState )
                     {
                         case BeginTransfer :
@@ -176,8 +175,6 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                 }
                 else if ( i >= SINGLETON_QUANTITY + studentQuantity ) // vending machines
                 {
-                    prevState = getState( Vending , lid );
-
                     switch ( prevState )
                     {
                         case Starting :
@@ -197,8 +194,6 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                 }
                 else if ( i >= SINGLETON_QUANTITY ) // students
                 {
-                    prevState = getState( Student , lid );
-
                     switch ( prevState )
                     {
                         case SelectingMachine :
@@ -219,8 +214,6 @@ void Printer::print( Kind kind , unsigned int lid , States state )
                 }
                 else // singletons
                 {
-                    prevState = getState( (Kind)i , 0 );
-
                     switch ( i )
                     {
                         case Parent :
