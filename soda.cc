@@ -1,3 +1,24 @@
+/**
+ * `soda` by Jimmy Yu and Doug Sherk
+ *
+ * For CS 343 Assignment 6.
+ *
+ * This program implements a vending machine and student concurrency system
+ * where students purchase sodas from the vending machines with the support of
+ * other classes like parents, couriers, WATCard offices, banks and nameservers.
+ *
+ * To make, type:
+ *  make
+ *
+ * To run, type:
+ *  ./soda [ config [ seed ] ]
+ *
+ * Where
+ * -----
+ *  config: file containing configuration parameters, defaults to soda.config
+ *  seed: time seed for random number calculation, defaults to time()
+ */
+
 #include <uC++.h>
 #include <iostream>
 #include <string>

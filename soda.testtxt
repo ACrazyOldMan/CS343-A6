@@ -1,0 +1,82 @@
+SODA TESTING DOCUMENTATION
+==========================
+This problem was tested by brute forcing it. The following inlined script will
+run a series of combinations of configuration parameters:
+
+  # Test script for `soda`
+  # By Doug Sherk and Jimmy Yu
+  #
+  # Brute force the problem and grep out any deadlocks. This test assumes that the
+  # only things that can go wrong are the following:
+  # 1) The program deadlocks and uC++ detects it, or
+  # 2) The program fails catastrophically enough that the error output bypasses
+  #    the grep
+  # This will take a very long time to run. This is normal.
+  # There are 58320 tests.
+
+  num = 0
+  for a in {1..3..1}; do
+    for b in {1..5..2}; do
+      for c in {5..20..5}; do
+        for d in {1..5..2}; do
+          for e in {3..7..2}; do
+            for f in {4..8..2}; do
+              for g in {1..9..4}; do
+                for h in {10..30..5}; do
+                  for i in {1..4..1}; do
+                    echo "SodaCost $a" > test.config
+                    echo "NumStudents $b" >> test.config
+                    echo "MaxPurchases $c" >> test.config
+                    echo "NumVendingMachines $d" >> test.config
+                    echo "MaxStockPerFlavour $e" >> test.config
+                    echo "MaxShippedPerFlavour $f" >> test.config
+                    echo "TimeBetweenShipments $g" >> test.config
+                    echo "ParentalDelay $h" >> test.config
+                    echo "NumCouriers $i" >> test.config
+                    num=`expr $num + 1`
+                    echo "Test #$num/58320"
+                    ./soda test.config | grep -i "deadlock"
+                  done
+                done
+              done
+            done
+          done
+        done
+      done
+    done
+  done
+
+If, for some reason, we couldn't test by using this script, we would test the
+following instead:
+1) Soda cost way higher than amount given by parents to see if waiting works.
+   Also can adjust parental delay and time between shipments very high and
+   number of couriers very low.
+2) Number of students very high to see if they block correctly.
+3) Number of vending machines very low to verify that students wait their turns.
+
+Additional manual tests
+-----------------------
+
+Check that number of arguments is correct:
+
+  ./soda kjahsf askjhdf akjshdf jkahsdf
+  Invalid number of arguments
+
+Check that seed is valid:
+
+  ./soda test.config 0
+  Invalid value [0] specified for seed
+
+Check that a config with wrong params doesn't work:
+
+  ./soda invalid.config
+  Error: file "invalid.config" is corrupt.
+
+Check that a file without eof doesn't work:
+
+  ./soda noeof.config
+  Error: file "noeof.config" has extraneous data.
+
+Check that a file that doesn't exist doesn't work:
+  ./soda doesntexist.config
+  Error: could not open input file "doesntexist.config"
